@@ -33,7 +33,7 @@
 AMARELO="\033[33;1m"
 VERMELHO="\033[31;1m"
 VERDE="\033[32;1m"
-MENSAGEM_USO=" 
+MENU=" 
  $0 -[OPÇÕES]
 
    -g - Genérico (Desenvolvedor)
@@ -80,7 +80,7 @@ Instalacao () {
 # --------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- EXECUÇÃO ------------------------------------------------- #
 echo "Instalação do Módulo de Segurança..."
-echo "Por favor, selecione qual módulo você deseja instalar." && echo "$MENSAGEM_USO"
+echo "Por favor, selecione qual módulo você deseja instalar." && echo "$MENU"
 if [ "$(uname -m)" != "x86_64" ]; then
   while test -n "$1"; do
     case "$1" in
