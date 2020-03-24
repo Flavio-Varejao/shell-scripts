@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install-warsaw-1.2.sh - Instala o Módulo de Segurança dos Bancos
+# install-warsaw-1.3.sh - Instala o Módulo de Segurança dos Bancos
 #
 # Site:     
 # Autor:      Flávio Varejão
@@ -9,7 +9,7 @@
 # Este script irá instalar a última versão do Módulo de Segurança dos Bancos no Linux
 #
 # Exemplos:
-#   $ ./install-warsaw-1.2.sh -b
+#   $ ./install-warsaw-1.3.sh -b
 #   Neste exemplo o script vai instalar o módulo do Banco do Brasil.
 #
 # Na seção de variáveis é possível alterar as URLs (em SITE) e o nome do arquivo (em ARQUIVO) 
@@ -24,22 +24,42 @@
 #   - Encurtamento de comandos
 #
 #   V1.2 27/02/2020, Flávio:
-#   - Criação dos vetores SITE e ARQUIVO             
+#   - Criação dos vetores SITE e ARQUIVO
+#
+#   V1.3 24/03/2020, Flávio:
+#   - Adicionada a opção de Ajuda
+#   - Adicionada a opção de Versão
+#   - Pequenas alterações 
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 # bash 4.4.20
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # ---------------------------------------- VARIÁVEIS-------------------------------------------------- #
+VERSAO="install-warsaw Versão 1.3"
+
+VERDE="\033[32;1m"
 AMARELO="\033[33;1m"
 VERMELHO="\033[31;1m"
-VERDE="\033[32;1m"
-MENU=" 
- $0 -[OPÇÕES]
 
-   -g - Genérico (Desenvolvedor)
-   -b - Banco do Brasil
-   -c - Caixa Econômica
-   -i - Banco Itaú
+MENU=" 
+ $0 [-OPÇÃO]
+
+   -g  Genérico (Desenvolvedor)
+   -b  Banco do Brasil
+   -c  Caixa Econômica
+   -i  Banco Itaú
+   -V  Versão do programa
+   -h  Ajuda
+"
+AJUDA="
+    $0 [-h] [--help]
+      
+       -g  Instala o Módulo de Segurança do site do desenvolvedor
+       -b  Instala o Módulo de Segurança do site do Banco do Brasil
+       -c  Instala o Módulo de Segurança do site da Caixa Econômica
+       -i  Instala o Módulo de Segurança do site do Banco Itaú
+       -V, --version  Exibe a versão deste programa e sai
+       -h, --help  Exibe esta tela de ajuda e sai
 "
 SITE=(
   "https://cloud.gastecnologia.com.br/gas/diagnostico/warsaw_setup_32.deb" \
@@ -80,7 +100,7 @@ Instalacao () {
 # --------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- EXECUÇÃO ------------------------------------------------- #
 echo "Instalação do Módulo de Segurança..."
-echo "Por favor, selecione qual módulo você deseja instalar." && echo "$MENU"
+echo "Por favor, selecione uma opção" && echo "$MENU"
 if [ "$(uname -m)" != "x86_64" ]; then
   while test -n "$1"; do
     case "$1" in
@@ -88,6 +108,8 @@ if [ "$(uname -m)" != "x86_64" ]; then
       -b) SITE=${SITE[2]} ARQUIVO=${ARQUIVO[2]} ;;
       -c) SITE=${SITE[4]} ARQUIVO=${ARQUIVO[4]} ;;
       -i) SITE=${SITE[6]} ARQUIVO=${ARQUIVO[6]} ;;
+      -h | --help) echo "$AJUDA" && exit 0      ;;
+      -V | --version) echo "$VERSAO" && exit 0  ;;
        *) echo -e "${VERMELHO}Opção inválida, selecione uma opção!" && tput sgr0 && exit 1 ;;
     esac
     Instalacao
@@ -99,6 +121,8 @@ else
       -b) SITE=${SITE[3]} ARQUIVO=${ARQUIVO[3]} ;;
       -c) SITE=${SITE[5]} ARQUIVO=${ARQUIVO[5]} ;;
       -i) SITE=${SITE[7]} ARQUIVO=${ARQUIVO[7]} ;;
+      -h | --help) echo "$AJUDA" && exit 0      ;;
+      -V | --version) echo "$VERSAO" && exit 0  ;;
        *) echo -e "${VERMELHO}Opção inválida, selecione uma opção!" && tput sgr0 && exit 1 ;;
     esac
     Instalacao
