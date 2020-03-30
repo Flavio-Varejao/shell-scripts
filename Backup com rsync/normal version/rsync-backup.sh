@@ -25,10 +25,11 @@
 # -a - Modo de arquivamento (inclui diretórios e mantém os metadados);
 # -v - Modo verboso (mostra o processo);
 # -h - Números compreensíveis para humanos;
-# -P - Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados.
-# --progress - Mostra o progresso durante a transferência
+# -P - Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados;
+# -z - Comprime os arquivos ou diretórios;
+# --progress - Mostra o progresso durante a transferência.
 #
-# Para incluir novas opções veja em 'rsync --help' altere o comando rsync  na seção de FUNÇÕES (linha 60 e 73).
+# Para incluir novas opções veja em 'rsync --help' altere o comando rsync  na seção de FUNÇÕES.
 # --------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
 #   Versão 1.0, Flávio:
