@@ -35,7 +35,7 @@
 #   Versão 1.0, Flávio:
 #     17/03/2020
 #       - Início do programa
-#       - Adicionado variáveis, testes, funções e execuçãoa
+#       - Adicionado variáveis, testes, funções e execução
 #     28/03/2020         
 #       - Adicionado tratamento de erros (função Verifica_status)          
 # --------------------------------------------------------------------------------------------------------------------------- #
@@ -101,7 +101,7 @@ while test -n "$1"; do
         read -rn1 resposta && echo ""
         case "$resposta" in
           S | s) dir_destino="/home/$USER/Backup/" && Backup_local ;; 
-          N | n) read -pr "Digite o diretório de destino: " dir_destino && Backup_local ;; 
+          N | n) read -rp "Digite o diretório de destino: " dir_destino && Backup_local ;; 
               *) echo "Processo abortado." && exit 1 ;;
         esac
     ;;
