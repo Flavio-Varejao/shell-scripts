@@ -29,7 +29,7 @@
 # -z - Comprime os arquivos ou diretórios;
 # --progress - Mostra o progresso durante a transferência.
 #
-# Para incluir novas opções veja em 'rsync --help' altere o comando rsync  na seção de FUNÇÕES.
+# Para incluir novas opções veja em 'rsync --help' altere o comando rsync na seção de FUNÇÕES.
 # --------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
 #   Versão 1.0, Flávio:
