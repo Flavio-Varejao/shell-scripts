@@ -56,6 +56,7 @@ DIR_DESTINO="mydrive:/"                #<-- Alterar aqui
 VERDE="\033[32;1m"
 AMARELO="\033[33;1m"
 VERMELHO="\033[31;1m"
+SEMCOR="\033[0m"
 
 LOG="$(date +%m%Y)"
 ARQUIVO_LOG="rcl-$LOG.log"
@@ -87,7 +88,12 @@ AJUDA="
 "
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- TESTES -------------------------------------------------- # 
-[ ! -x "$(which rclone)" ] && curl https://rclone.org/install.sh | sudo bash #rclone instalado?
+#curl instalado?
+[ ! -x "$(which curl)" ] && {
+printf "${AMARELO}Precisamos instalar o ${VERDE}Curl${AMARELO}, por favor, digite sua senha:${SEMCOR}\n" && sudo apt install curl 1> /dev/null 2>&1 -y
+}
+#rclone instalado?
+[ ! -x "$(which rclone)" ] && curl https://rclone.org/install.sh | sudo bash 
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- FUNÇÕES ------------------------------------------------- #
 Agendar () { crontab -e && exit; }
