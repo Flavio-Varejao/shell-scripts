@@ -12,7 +12,7 @@
 # crontab. Leia as instruções a seguir.
 # 
 # Dê permissão de execução (primeiro acesso):
-#   $ ./chmod +x rclone-sync.sh
+#   $ chmod +x rclone-sync.sh
 #
 # Exemplos de uso:
 #   $ ./rclone-sync.sh -s
