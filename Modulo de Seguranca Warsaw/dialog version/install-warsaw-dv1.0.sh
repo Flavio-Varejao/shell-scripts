@@ -17,8 +17,12 @@
 # caso tenham sofrido alguma mudança no servidor.   
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
-#   v1.0 14/03/2020, Flávio:
-#     - Início do programa            
+#   Versão 1.0, Flávio:
+#     14/03/2020
+#       - Início do programa
+#     11/05/2020
+#       - Adicionado a opção de exibir informações do pacote
+#       - Adicionado a opção de remover o pacote
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20
@@ -56,9 +60,22 @@ dialog --title 'Instalação do Módulo de Segurança' \
 if [ $? -eq 0 ]; then
   [ -x "$(which warsaw)" ] && {
     dialog --title 'Instalação do Módulo de Segurança' \
-    --infobox 'Módulo de segurança já está instalado!' 3 45; sleep 5 && clear
-    dpkg -s warsaw > "$TEMP"
-    dialog --title 'Módulo de Segurança' --textbox "$TEMP" 0 0 && rm -f "$TEMP" && clear
+    --infobox 'Módulo de segurança já está instalado!' 3 45; sleep 1.5
+    menu_pacote=$(dialog --title 'Instalação do Módulo de Segurança' \
+    --menu 'Selecione uma opção (usar setas e barra de espaço).' 10 38 5 \
+      1 'Exibir informações do pacote' \
+      2 'Remover o pacote' --stdout 
+    )  
+    case $menu_pacote in
+      1) dpkg -s warsaw > "$TEMP"
+         dialog --title 'Módulo de Segurança' --textbox "$TEMP" 0 0 && rm -f "$TEMP"
+         clear && exit 0
+      ;;  
+      2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0
+      ;;
+      *) clear && exit 0
+      ;;
+    esac  
   } 
 else
   clear && exit 0
@@ -77,7 +94,7 @@ Instalacao () {
 }
 # --------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- EXECUÇÃO ------------------------------------------------- #
-menu=$(dialog --title 'Instalação do Módulo de Segurança' \
+menu_instalacao=$(dialog --title 'Instalação do Módulo de Segurança' \
 --radiolist 'Selecione qual módulo você deseja instalar (usar setas e barra de espaço).' 13 38 5 \
   'Genérico' '' ON \
   'Banco do Brasil' '' OFF \
@@ -85,7 +102,7 @@ menu=$(dialog --title 'Instalação do Módulo de Segurança' \
   'Banco Itaú' '' OFF --stdout
 )
 if [ "$(uname -m)" != "x86_64" ]; then
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[0]} ARQUIVO=${ARQUIVO[0]}         ;;
     "Banco do Brasil") SITE=${SITE[2]} ARQUIVO=${ARQUIVO[2]}  ;;    
     "Caixa Econômica") SITE=${SITE[4]} ARQUIVO=${ARQUIVO[4]}  ;;    
@@ -94,7 +111,7 @@ if [ "$(uname -m)" != "x86_64" ]; then
   esac
   Instalacao
 else
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[1]} ARQUIVO=${ARQUIVO[1]}         ;;
     "Banco do Brasil") SITE=${SITE[3]} ARQUIVO=${ARQUIVO[3]}  ;; 
     "Caixa Econômica") SITE=${SITE[5]} ARQUIVO=${ARQUIVO[5]}  ;;   
