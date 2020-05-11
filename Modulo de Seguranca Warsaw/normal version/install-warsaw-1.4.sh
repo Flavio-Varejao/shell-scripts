@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install-warsaw-1.3.sh - Instala o Módulo de Segurança dos Bancos
+# install-warsaw-1.4.sh - Instala o Módulo de Segurança dos Bancos
 #
 # Site:     
 # Autor:      Flávio Varejão
@@ -9,7 +9,7 @@
 # Este script irá instalar a última versão do Módulo de Segurança dos Bancos no Linux
 #
 # Exemplos:
-#   $ ./install-warsaw-1.3.sh -b
+#   $ ./install-warsaw-1.4.sh -b
 #   Neste exemplo o script vai instalar o módulo do Banco do Brasil.
 #
 # Na seção de variáveis é possível alterar as URLs (em SITE) e o nome do arquivo (em ARQUIVO) 
@@ -27,21 +27,25 @@
 #   - Criação dos vetores SITE e ARQUIVO
 #
 #   V1.3 24/03/2020, Flávio:
-#   - Adicionada a opção de Ajuda
-#   - Adicionada a opção de Versão
-#   - Pequenas alterações 
+#   - Adicionado a opção de Ajuda
+#   - Adicionado a opção de Versão
+#   - Pequenas alterações
+#
+#   V1.4 11/05/2020, Flávio:
+#   - Adicionado a opção de exibir informações do pacote
+#   - Adicionado a opção de remover o pacote
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 # bash 4.4.20
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # ---------------------------------------- VARIÁVEIS-------------------------------------------------- #
-VERSAO="install-warsaw Versão 1.3"
+VERSAO="install-warsaw Versão 1.4"
 
 VERDE="\033[32;1m"
 AMARELO="\033[33;1m"
 VERMELHO="\033[31;1m"
 
-MENU=" 
+MENU_INSTALACAO=" 
  $0 [-OPÇÃO]
 
    -g  Genérico (Desenvolvedor)
@@ -50,6 +54,12 @@ MENU="
    -i  Banco Itaú
    -V  Versão do programa
    -h  Ajuda
+"
+MENU_PACOTE="
+ $0 [-OPÇÃO]
+
+    1) Exibir informações do pacote
+    2) Remover o pacote
 "
 AJUDA="
     $0 [-h] [--help]
@@ -84,10 +94,18 @@ ARQUIVO=(
 # -------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- TESTES --------------------------------------------------- #
 # warsaw instalado?
-[ -x "$(which warsaw)" ] && { 
-  echo -e "${VERDE}Módulo de segurança já está instalado!" && tput sgr0
-  dpkg -s warsaw && exit 0
-}
+if [ -x "$(which warsaw)" ]; then
+  echo -e "\n${VERDE}Módulo de segurança já está instalado! \n" && tput sgr0
+  echo "Selecione uma opção" && echo "$MENU_PACOTE"
+  while test -n "$1"; do
+    case "$1" in
+      1) dpkg -s warsaw && exit 0                                                            ;;
+      2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0                             ;;
+      *) echo -e "${VERMELHO}Opção inválida, selecione uma opção! \n" && tput sgr0 && exit 1 ;;
+    esac
+  done 
+  exit 0 
+fi
 # --------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- FUNÇÕES -------------------------------------------------- #
 Instalacao () {
@@ -95,12 +113,12 @@ Instalacao () {
   wget -c "$SITE"
   [ ! -f "$ARQUIVO" ] && echo -e "${VERMELHO}Falha no download! Instalação abortada." && tput sgr0 && exit 1
   sudo apt update && sudo dpkg -i "$ARQUIVO" && sudo apt -f install -y
-  echo -e "${AMARELO}Por favor reinicie seu computador para ativar o serviço." && tput sgr0 && exit 0
+  echo -e "${AMARELO}Por favor reinicie seu computador para ativar o serviço. \n" && tput sgr0 && exit 0
 }
 # --------------------------------------------------------------------------------------------------------------------------------- #
 # ----------------------------------------- EXECUÇÃO ------------------------------------------------- #
 echo "Instalação do Módulo de Segurança..."
-echo "Por favor, selecione uma opção" && echo "$MENU"
+echo "Por favor, selecione uma opção" && echo "$MENU_INSTALACAO"
 if [ "$(uname -m)" != "x86_64" ]; then
   while test -n "$1"; do
     case "$1" in
@@ -123,7 +141,7 @@ else
       -i) SITE=${SITE[7]} ARQUIVO=${ARQUIVO[7]} ;;
       -h | --help) echo "$AJUDA" && exit 0      ;;
       -V | --version) echo "$VERSAO" && exit 0  ;;
-       *) echo -e "${VERMELHO}Opção inválida, selecione uma opção!" && tput sgr0 && exit 1 ;;
+       *) echo -e "${VERMELHO}Opção inválida, selecione uma opção! \n" && tput sgr0 && exit 1 ;;
     esac
     Instalacao
   done
