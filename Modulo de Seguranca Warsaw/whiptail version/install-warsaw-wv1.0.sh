@@ -16,8 +16,12 @@
 # Na seção de variáveis é possível alterar as URLs (em SITE) e o nome do arquivo (em ARQUIVO) caso tenham sofrido alguma mudança no servidor.   
 # ---------------------------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
-#   v1.0 15/03/2020, Flávio:
-#     - Início do programa            
+#   Versão 1.0, Flávio:
+#     15/03/2020
+#       - Início do programa
+#     12/05/2020
+#       - Adicionado a opção de exibir informações do pacote
+#       - Adicionado a opção de remover o pacote
 # ---------------------------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20
@@ -56,11 +60,24 @@ if [ $? -eq 0 ]; then
   [ -x "$(which warsaw)" ] && {
     whiptail --title "Instalação do Módulo de Segurança" \
     --msgbox "Módulo de segurança já está instalado!" --fb 10 42
-    dpkg -s warsaw > "$TEMP"
-    whiptail --title "Módulo de Segurança" --textbox "$TEMP" 20 65 --scrolltext && rm -f "$TEMP"
+    menu_pacote=$(whiptail --title "Instalação do Módulo de Segurança" \
+    --menu "Selecione uma opção (usar setas e barra de espaço)." 12 40 2 \
+      "1" "Exibir informações do pacote" \
+      "2" "Remover o pacote" 3>&1 1>&2 2>&3 
+    )
+    case $menu_pacote in
+      1) dpkg -s warsaw > "$TEMP"
+         whiptail --title "Módulo de Segurança" --textbox "$TEMP" 20 65 --scrolltext && rm -f "$TEMP"
+         clear && exit 0
+      ;;  
+      2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0
+      ;;
+      *) clear && exit 0
+      ;;
+    esac  
   } 
 else
-  exit 0
+  clear && exit 0
 fi
 # ---------------------------------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------- FUNÇÕES ----------------------------------------------------------------- #
@@ -76,7 +93,7 @@ Instalacao () {
 }
 # ---------------------------------------------------------------------------------------------------------------------------------------------- #
 # -------------------------------------------------------- EXECUÇÃO ---------------------------------------------------------------- #
-menu=$(whiptail --title "Instalação do Módulo de Segurança" \
+menu_instalacao=$(whiptail --title "Instalação do Módulo de Segurança" \
 --radiolist "Selecione qual módulo você deseja instalar (usar setas, barra de espaço e o TAB)." 14 40 4 \
   "Genérico" "" ON \
   "Banco do Brasil" "" OFF \
@@ -84,7 +101,7 @@ menu=$(whiptail --title "Instalação do Módulo de Segurança" \
   "Banco Itaú" ""  OFF  3>&1 1>&2 2>&3
 )
 if [ "$(uname -m)" != "x86_64" ]; then
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[0]} ARQUIVO=${ARQUIVO[0]}        ;;
     "Banco do Brasil") SITE=${SITE[2]} ARQUIVO=${ARQUIVO[2]} ;;    
     "Caixa Econômica") SITE=${SITE[4]} ARQUIVO=${ARQUIVO[4]} ;;    
@@ -93,7 +110,7 @@ if [ "$(uname -m)" != "x86_64" ]; then
   esac
   Instalacao
 else
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[1]} ARQUIVO=${ARQUIVO[1]}        ;;
     "Banco do Brasil") SITE=${SITE[3]} ARQUIVO=${ARQUIVO[3]} ;; 
     "Caixa Econômica") SITE=${SITE[5]} ARQUIVO=${ARQUIVO[5]} ;;   
