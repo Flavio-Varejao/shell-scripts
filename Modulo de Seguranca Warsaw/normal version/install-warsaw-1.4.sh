@@ -58,8 +58,8 @@ MENU_INSTALACAO="
 MENU_PACOTE="
  $0 [-OPÇÃO]
 
-    1) Exibir informações do pacote
-    2) Remover o pacote
+    -1) Exibir informações do pacote
+    -2) Remover o pacote
 "
 AJUDA="
     $0 [-h] [--help]
@@ -99,10 +99,11 @@ if [ -x "$(which warsaw)" ]; then
   echo "Selecione uma opção" && echo "$MENU_PACOTE"
   while test -n "$1"; do
     case "$1" in
-      1) dpkg -s warsaw && exit 0                                                            ;;
-      2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0                             ;;
-      *) echo -e "${VERMELHO}Opção inválida, selecione uma opção! \n" && tput sgr0 && exit 1 ;;
+      -1) dpkg -s warsaw && exit 0                                                            ;;
+      -2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0                             ;;
+       *) echo -e "${VERMELHO}Opção inválida, selecione uma opção! \n" && tput sgr0 && exit 1 ;;
     esac
+    exit 0
   done 
   exit 0 
 fi
