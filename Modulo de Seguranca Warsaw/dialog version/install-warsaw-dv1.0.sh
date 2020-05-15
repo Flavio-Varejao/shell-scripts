@@ -73,9 +73,8 @@ if [ $? -eq 0 ]; then
       ;;  
       2) sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0
       ;;
-      *) clear && exit 0
-      ;;
-    esac  
+    esac
+    clear && exit 0
   } 
 else
   clear && exit 0
