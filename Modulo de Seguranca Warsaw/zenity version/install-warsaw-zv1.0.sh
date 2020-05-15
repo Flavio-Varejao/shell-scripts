@@ -44,6 +44,7 @@ ARQUIVO=(
   "warsaw_setup_32.deb" \
   "warsaw_setup_64.deb" \
 )
+TEMP=temp.$$
 # ------------------------------------------------------------------------------------------------------------------------------ #
 # --------------------------------------------- TESTES ------------------------------------------------------- # 
 [ ! -x "$(which zenity)" ] && sudo apt install zenity -y 1> /dev/null 2>&1 # zenity instalado?
@@ -55,11 +56,21 @@ zenity --question --title "Instalação do Módulo de Segurança" \
 if [ $? -eq 0 ]; then
   [ -x "$(which warsaw)" ] && {
     zenity --info --title "Instalação do Módulo de Segurança" \
-    --text="Módulo de segurança já está instalado!" --width="280" && clear
-    dpkg -s warsaw && exit 0
+    --text="Módulo de segurança já está instalado!" --width="280"
+    menu_pacote=$(zenity --title "Instalação do Módulo de Segurança" \
+    --list --column "Módulo de Segurança Warsaw" \
+      "Exibir informações do pacote" "Remover o pacote" --width="350" --height="180"
+    )  
+    case $menu_pacote in
+      "Exibir informações do pacote") clear && dpkg -s warsaw && exit 0
+      ;;  
+      "Remover o pacote") sudo dpkg -r warsaw && sudo apt autoremove -y && exit 0
+      ;;
+    esac
+    clear && exit 0
   } 
 else
-  exit 0
+  clear && exit 0
 fi
 # ------------------------------------------------------------------------------------------------------------------------------- #
 # --------------------------------------------- FUNÇÕES ----------------------------------------------------- #
@@ -75,7 +86,7 @@ Instalacao () {
 }
 # ------------------------------------------------------------------------------------------------------------------------------ #
 # --------------------------------------------- EXECUÇÃO ---------------------------------------------------- #
-menu=$(zenity --list --title "Instalação do Módulo de Segurança" \
+menu_instalacao=$(zenity --list --title "Instalação do Módulo de Segurança" \
   --text="Selecione qual módulo você deseja instalar" \
   --radiolist \
   --column "Marcar" \
@@ -83,7 +94,7 @@ menu=$(zenity --list --title "Instalação do Módulo de Segurança" \
   TRUE "Genérico" FALSE "Banco do Brasil" FALSE "Caixa Econômica" FALSE "Banco Itaú" --width="350" --height="215"
 )
 if [ "$(uname -m)" != "x86_64" ]; then
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[0]} ARQUIVO=${ARQUIVO[0]}        ;;
     "Banco do Brasil") SITE=${SITE[2]} ARQUIVO=${ARQUIVO[2]} ;;    
     "Caixa Econômica") SITE=${SITE[4]} ARQUIVO=${ARQUIVO[4]} ;;    
@@ -92,7 +103,7 @@ if [ "$(uname -m)" != "x86_64" ]; then
   esac
   Instalacao
 else
-  case $menu in
+  case $menu_instalacao in
     "Genérico") SITE=${SITE[1]} ARQUIVO=${ARQUIVO[1]}        ;;
     "Banco do Brasil") SITE=${SITE[3]} ARQUIVO=${ARQUIVO[3]} ;; 
     "Caixa Econômica") SITE=${SITE[5]} ARQUIVO=${ARQUIVO[5]} ;;   
