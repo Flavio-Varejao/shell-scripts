@@ -17,8 +17,12 @@
 # caso tenham sofrido alguma mudança no servidor.   
 # ------------------------------------------------------------------------------------------------------------------------------ #
 # Histórico:
-#   v1.0 13/03/2020, Flávio:
-#     - Início do programa            
+#   Versão 1.0, Flávio: 
+#     13/03/2020
+#       - Início do programa
+#     16/05/2020
+#       - Adicionado a opção de exibir informações do pacote
+#       - Adicionado a opção de remover o pacote
 # ------------------------------------------------------------------------------------------------------------------------------ #
 # Testado em:
 #   bash 4.4.20
