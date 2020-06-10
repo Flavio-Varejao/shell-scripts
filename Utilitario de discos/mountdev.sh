@@ -9,18 +9,24 @@
 # Este script formata e/ou grava uma imagem USB em um dispositivo de armazenamento externo.
 # Leia o que se segue.
 #
-# Exemplo:
-#   $ ./mountdev.sh -f
-#   Neste exemplo o script vai formatar o seu dispositivo
+# Como usar:
+#
+#   Primeiro acesso (permissão de execução):
+#     $ chmod +x mountdev.sh
+#
+#   Exemplo:
+#     $ ./mountdev.sh -f
+#     Neste exemplo o script vai formatar o seu dispositivo
 #
 # O script identifica se o dispositivo está montado, se estiver montado ele
 # abre um menu com as opções. No processo de formatar é possível 
 # selecionar entre FAT32, NTFS e EXT4.
 #
 # ATENÇÃO!
-# ESTE SCRIPT NÃO FOI TESTADO EM UMA MÁQUINA COM MAIS DE 1 DISPOSITIVO DE ARMAZENAMENTO INSERIDO.
+# ESTE SCRIPT IDENTIFICA O DISPOSITIVO DE ARMAZENAMENTO MONTADO NA PORTA USB.
+# MAS NÃO FOI TESTADO EM UMA MÁQUINA COM MAIS DE 1 DISPOSITIVO DE ARMAZENAMENTO USB.
 # LOGO, DEVIDO A ESSA LIMITAÇÃO, O SCRIPT ESTÁ INCOMPLETO E PRECISA SER APERFEIÇOADO.
-# VERIFIQUE O DIRETÓRIO DO PENDRIVE. NÃO ME RESPONSABILIZO POR PERDAS DE DADOS!
+# VERIFIQUE O DIRETÓRIO DO PENDRIVE OU HD EXTERNO. NÃO ME RESPONSABILIZO POR PERDAS DE DADOS!
 # -------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
 #   v1.0 09/06/2020, Flávio:
