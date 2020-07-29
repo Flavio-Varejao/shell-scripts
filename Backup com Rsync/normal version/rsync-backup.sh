@@ -21,23 +21,27 @@
 # (data, hora, arquivos copiados, etc).
 #
 # Opções incluídas ou sugeridas para o comando rsync:
-# -u - Envia somente novos arquivos ou modificados;
-# -a - Modo de arquivamento (inclui diretórios e mantém os metadados);
-# -v - Modo verboso (mostra o processo);
-# -h - Números compreensíveis para humanos;
-# -P - Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados;
-# -z - Comprime os arquivos ou diretórios;
-# --progress - Mostra o progresso durante a transferência.
+# -a Agrupa todas essas opções -rlptgoD (recursiva, links, permissões, horários, grupo, proprietário, dispositivos);
+# -v Modo verboso (mostra o processo);
+# -h Números compreensíveis para humanos;
+# -P Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados;
+# -z Comprime os arquivos ou diretórios;
+# -e ssh Utiliza o protocolo de rede SSH;
+# --delete-after Após a transferência exclui arquivos do destino que não estão na origem (sincroniza os diretórios);
+# --progress Mostra o progresso durante a transferência.
 #
 # Para incluir novas opções veja em 'rsync --help' altere o comando rsync na seção de FUNÇÕES.
 # --------------------------------------------------------------------------------------------------------------------------- #
 # Histórico:
 #   Versão 1.0, Flávio:
 #     17/03/2020
-#       - Início do programa
-#       - Adicionado variáveis, testes, funções e execução
+#       - Início do programa.
+#       - Adicionado variáveis, testes, funções e execução.
 #     28/03/2020         
-#       - Adicionado tratamento de erros (função Verifica_status)          
+#       - Adicionado tratamento de erros (função Verifica_status).
+#   Versão 2.0, Flávio:
+#     29/07/2020
+#       - Alterações no cabeçalho do script e no comando do backup remoto.
 # --------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20 
@@ -72,7 +76,7 @@ Backup_local () {
 Backup_remoto () {
   clear && echo -e "${AMARELO}Backup remoto \n" && tput sgr0
   echo "$MENSAGEM_LOG" >> "$ARQUIVO_LOG"
-  sudo rsync -uavhP --progress "$dir_origem" "$dir_destino" --log-file="$ARQUIVO_LOG" # Alterar as opções se necessário
+  sudo rsync -avhP --progress -e ssh "$dir_origem" "$dir_destino" --log-file="$ARQUIVO_LOG" # Alterar as opções se necessário
   Verifica_status
 }
 Verifica_status () {
@@ -107,8 +111,8 @@ while test -n "$1"; do
     ;;
     -r) 
         clear && echo -e "${AMARELO}Backup remoto \n" && tput sgr0
-        read -rp "Digite a origem (servidor ou máquina local): " dir_origem && echo ""  
-        read -rp "Digite o destino (máquina local ou servidor): " dir_destino && echo ""
+        read -rp "Digite a origem (Exemplo:/home/$USER/Backup/): " dir_origem && echo ""  
+        read -rp "Digite o destino (Exemplo: username@xxx.xxx.xxx:~/destino): " dir_destino && echo ""
         Backup_remoto
     ;;
      *) echo -e "${VERMELHO}Opção inválida. Digite $0 [-OPÇÃO] \n" && tput sgr0
