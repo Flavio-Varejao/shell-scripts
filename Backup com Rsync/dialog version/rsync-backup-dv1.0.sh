@@ -21,13 +21,14 @@
 # (data, hora, arquivos copiados, etc).
 #
 # Opções incluídas no comando rsync:
-# -u  Envia somente novos arquivos ou modificados;
-# -a  Modo de arquivamento (inclui diretórios e mantém os metadados);
-# -v  Modo verboso (visualiza o processo);
-# -h  Números compreensíveis para humanos;
-# -P  Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados;
-# -z  Comprime os arquivos ou diretórios;
-# --progress  Mostra o progresso durante a transferência.
+# -a Agrupa todas essas opções -rlptgoD (recursiva, links, permissões, horários, grupo, proprietário, dispositivos);
+# -v Modo verboso (mostra o processo);
+# -h Números compreensíveis para humanos;
+# -P Exibe os tempos de transferência, nomes dos arquivos e diretórios sincronizados;
+# -z Comprime os arquivos ou diretórios;
+# -e ssh Utiliza o protocolo de rede SSH;
+# --delete-after Após a transferência exclui arquivos do destino que não estão na origem (sincroniza os diretórios);
+# --progress Mostra o progresso durante a transferência.
 #
 # Para incluir novas opções (rsync --help) altere o comando rsync na seção de FUNÇÕES.   
 # --------------------------------------------------------------------------------------------------------------------------- #
@@ -38,6 +39,8 @@
 #       - Adicionado variáveis, testes, funções e execução
 #     28/03/2020         
 #       - Adicionado barras de progresso
+#     31/07/2020
+#       - Alterações no cabeçalho do script e no comando do backup remoto
 # --------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20 
@@ -68,7 +71,7 @@ Backup_local () {
 Backup_remoto () {
   dialog --infobox 'Iniciando Backup...' 3 25; sleep 1
   echo "$MENSAGEM_LOG" >> "$ARQUIVO_LOG"
-  sudo rsync -avhP --progress "$dir_origem" "$dir_destino" --log-file="$ARQUIVO_LOG" \
+  sudo rsync -avhP --progress -e ssh "$dir_origem" "$dir_destino" --log-file="$ARQUIVO_LOG" \
   | perl -lane 'BEGIN { $/ = "\r"; $|++ } $F[1] =~ /(\d+)%$/ && print $1' \
   | dialog --gauge 'Aguarde... Copiando Arquivos' 8 70 0
   dialog --msgbox 'Backup concluído com sucesso!' 6 35
