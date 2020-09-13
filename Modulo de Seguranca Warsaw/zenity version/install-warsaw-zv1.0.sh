@@ -33,8 +33,8 @@ SITE=(
   "https://cloud.gastecnologia.com.br/gas/diagnostico/warsaw_setup_64.deb" \
   "https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup.deb" \
   "https://cloud.gastecnologia.com.br/bb/downloads/ws/warsaw_setup64.deb" \
-  "https://imagem.caixa.gov.br/banner/fgr/GBPCEFwr32.deb" \
-  "https://imagem.caixa.gov.br/banner/fgr/GBPCEFwr64.deb" \
+  "https://cloud.gastecnologia.com.br/cef/warsaw/install/GBPCEFwr32.deb" \
+  "https://cloud.gastecnologia.com.br/cef/warsaw/install/GBPCEFwr64.deb" \
   "https://guardiao.itau.com.br/warsaw/warsaw_setup_32.deb" \
   "https://guardiao.itau.com.br/warsaw/warsaw_setup_64.deb" \
 )
