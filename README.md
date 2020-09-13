@@ -8,3 +8,6 @@ Repositório para armazenar meus scripts de:
 - Sincronização com a nuvem
 
 - Utilitário para dispositivos de armazenamento
+
+- Organizador de Diretório
+
