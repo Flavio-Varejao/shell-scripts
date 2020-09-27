@@ -43,6 +43,8 @@
 #       - Adicionado novas funções e menu de ajuda
 #     02/04/2020
 #       - Adicionado tratamento de erros (função Verifica_status)
+#     27/09/2020
+#       - Adicionado a opção de montagem de disco
 # -------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20 
@@ -65,7 +67,8 @@ MENSAGEM_LOG="#$(date "+%A, %d %B %Y")#"
 MENU="
   $0 [-OPÇÃO]
     
-    -s  Sincronizar
+    -s  Sincronizar o dispositivo
+    -d  Montar o dispositivo
     -l  Listar arquivos
     -v  Verificar arquivos
     -i  Informações de armazenamento
@@ -78,6 +81,7 @@ AJUDA="
     $0 [-h] [--help]
     
         -s  Sincroniza os arquivos da nuvem <---> máquina local
+        -d  Monta o drive na sua máquina local
         -l  Lista os arquivos e diretórios da nuvem
         -v  Verifica diferenças entra a nuvem e a máquina local
         -i  Exibe informações de armazenamento da nuvem (espaço total, usado, livre)
@@ -90,7 +94,7 @@ AJUDA="
 # ------------------------------------------------- TESTES -------------------------------------------------- # 
 #curl instalado?
 [ ! -x "$(which curl)" ] && {
-printf "${AMARELO}Precisamos instalar o ${VERDE}Curl${AMARELO}, por favor, digite sua senha:${SEMCOR}\n" && sudo apt install curl 1> /dev/null 2>&1 -y
+printf "${AMARELO}Precisamos instalar o ${VERDE}Curl${AMARELO}, por favor, digite sua senha${SEMCOR}\n" && sudo apt install curl 1> /dev/null 2>&1 -y
 }
 #rclone instalado?
 [ ! -x "$(which rclone)" ] && curl https://rclone.org/install.sh | sudo bash 
@@ -105,6 +109,11 @@ Informacao () { rclone about "$DIR_DESTINO" && exit; }
 Listar () { rclone tree "$DIR_DESTINO" && exit; }
 
 Manual () { man rclone && exit; }
+
+Montar () {
+  rclone mount "$DIR_DESTINO" "$DIR_ORIGEM" &
+  exit 0
+}
 
 Verificar () { 
   rclone check "$DIR_ORIGEM" "$DIR_DESTINO" 
@@ -134,6 +143,10 @@ while [ -n "$1" ] ; do
      ;; 
     -c) clear && echo -e "${AMARELO}Configuração do rclone \n" && tput sgr0
         Configurar
+     ;;
+    -d) clear && echo -e "${AMARELO}Montagem do dispositivo remoto \n"
+        echo -e "${VERDE}Drive montado\n" && tput sgr0
+        Montar
      ;;
     -h | --help) echo -e "${AMARELO}$AJUDA \n" && tput sgr0 && exit 0        
      ;;  
