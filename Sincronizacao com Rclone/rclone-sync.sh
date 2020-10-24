@@ -45,15 +45,23 @@
 #       - Adicionado tratamento de erros (função Verifica_status)
 #     27/09/2020
 #       - Adicionado a opção de montagem de disco
+#     23/10/2020
+#       - Adicionado a opção de atualizar o rclone
 # -------------------------------------------------------------------------------------------------------------------------- #
 # Testado em:
 #   bash 4.4.20 
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------ VARIÁVEIS------------------------------------------------- #
-# Altere aqui para o seu serviço remoto. O padrão é o sincronismo da máquina para nuvem.
-# Inverta os diretórios se você costuma sincronizar da nuvem para sua máquina:
-DIR_ORIGEM="/home/$USER/google-drive/" #<-- Alterar aqui
-DIR_DESTINO="mydrive:/"                #<-- Alterar aqui
+
+# Altere aqui para o seu serviço remoto. O padrão é o sincronismo da máquina para nuvem
+
+# Inverta os diretórios se você costuma sincronizar da nuvem para sua máquina
+
+DIR_ORIGEM="$HOME/google-drive" #<-- Alterar aqui (esse diretório é o que você quer sincronizar)
+
+DIR_DESTINO="mydrive:/"         #<-- Alterar aqui (esse é o drive que você configurou)
+
+DIR_MONTAGEM="$HOME/drive"      #<- Alterar aqui (esse é o diretório para a montagem; ele deve estar vazio)
 
 VERDE="\033[32;1m"
 AMARELO="\033[33;1m"
@@ -72,9 +80,10 @@ MENU="
     -l  Listar arquivos
     -v  Verificar arquivos
     -i  Informações de armazenamento
-    -a  Agendar sincronização
+    -a  Agendar sincronização e/ou montagem
     -m  Ver o manual do rclone
     -c  Configurar o rclone
+    -u  Atualizar o rclone
     -h  Ajuda deste menu
 "
 AJUDA="
@@ -85,22 +94,50 @@ AJUDA="
         -l  Lista os arquivos e diretórios da nuvem
         -v  Verifica diferenças entra a nuvem e a máquina local
         -i  Exibe informações de armazenamento da nuvem (espaço total, usado, livre)
-        -a  Agenda sincronizações com a ferramenta crontab
+        -a  Agenda a sincronização e/ou a montagem com a ferramenta crontab
         -m  Exibe o manual do rclone
         -c  Configura o rclone para a nuvem
+        -u  Atualiza o rclone para versão mais recente
         -h, --help  Exibe esta tela de ajuda e sai
 "
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- TESTES -------------------------------------------------- # 
 #curl instalado?
 [ ! -x "$(which curl)" ] && {
-printf "${AMARELO}Precisamos instalar o ${VERDE}Curl${AMARELO}, por favor, digite sua senha${SEMCOR}\n" && sudo apt install curl 1> /dev/null 2>&1 -y
+  echo -e "\n${AMARELO}Verificando dependências...\n${SEMCOR}"
+  echo -e "Precisamos instalar o ${VERDE}Curl${SEMCOR}\n"
+  sudo apt install curl -y
 }
+
 #rclone instalado?
-[ ! -x "$(which rclone)" ] && curl https://rclone.org/install.sh | sudo bash 
+[ ! -x "$(which rclone)" ] && {
+  echo -e "\n${AMARELO}Instalação do rclone\n"${SEMCOR}
+  curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb
+  sudo apt install ./rclone-current-linux-amd64.deb -y && sudo apt -f install
+  rm rclone-current-linux-amd64.deb
+}
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- FUNÇÕES ------------------------------------------------- #
 Agendar () { crontab -e && exit; }
+
+Atualizar() { 
+  if [ "$(curl -s https://downloads.rclone.org/version.txt)" == "$(rclone version | grep rclone)" ]; then
+    echo -e "$(rclone version | grep rclone)\n"
+    echo -e "Sua versão é a mais recente\n" && exit 0
+  else
+    echo -e "Existe uma versão mais recente no repositório"
+    echo -e "\nDeseja atualizar para a versão mais recente? [s/n]"
+    read resposta
+    case "$resposta" in
+      Sim|sim|s|S) curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb
+                   sudo apt install ./rclone-current-linux-amd64.deb -y && sudo apt -f install
+                   rm rclone-current-linux-amd64.deb
+                   echo -e "\nrclone atualizado com sucesso\n" && exit 0 ;;
+      Nao|nao|n|N) exit 1                                                ;;
+                *) echo "Selecione 'sim' ou 'nao'"                       ;;
+    esac
+  fi
+}
 
 Configurar () { rclone config && clear && exit; }
 
@@ -111,7 +148,8 @@ Listar () { rclone tree "$DIR_DESTINO" && exit; }
 Manual () { man rclone && exit; }
 
 Montar () {
-  rclone mount "$DIR_DESTINO" "$DIR_ORIGEM" &
+  rclone mount "$DIR_DESTINO" "$DIR_MONTAGEM" &
+  echo -e "${SEMCOR}Drive montado em: ${VERDE}"$DIR_MONTAGEM"\n" && tput sgr0
   exit 0
 }
 
@@ -119,11 +157,13 @@ Verificar () {
   rclone check "$DIR_ORIGEM" "$DIR_DESTINO" 
   exit
 }
+
 Sincronizar () { 
   echo "$MENSAGEM_LOG" >> "$ARQUIVO_LOG"
   rclone -vP sync --progress "$DIR_ORIGEM" "$DIR_DESTINO" --log-file="$ARQUIVO_LOG"
   Verifica_status
 }
+
 Verifica_status () {
   tail "$ARQUIVO_LOG" | grep "ERROR" 
   if [ ! $? -eq 0 ]; then
@@ -136,7 +176,7 @@ Verifica_status () {
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- EXECUÇÃO ------------------------------------------------ #
 echo -e "\n Sincronização com rclone \n $MENU"
-while [ -n "$1" ] ; do
+while [ -n "$1" ]; do
   case "$1" in
     -a) clear && echo -e "${AMARELO}Agendamento da sincronização \n" && tput sgr0
         Agendar
@@ -145,7 +185,6 @@ while [ -n "$1" ] ; do
         Configurar
      ;;
     -d) clear && echo -e "${AMARELO}Montagem do dispositivo remoto \n"
-        echo -e "${VERDE}Drive montado\n" && tput sgr0
         Montar
      ;;
     -h | --help) echo -e "${AMARELO}$AJUDA \n" && tput sgr0 && exit 0        
@@ -160,6 +199,9 @@ while [ -n "$1" ] ; do
      ;;
     -s) clear && echo -e "${AMARELO}Sincronizar na nuvem \n" && tput sgr0
         Sincronizar
+     ;;
+    -u) clear && echo -e "${AMARELO}Atualização do Rclone\n" && tput sgr0
+        Atualizar
      ;;
     -v) clear && echo -e "${AMARELO}Verificação de arquivos \n" && tput sgr0
         Verificar     
