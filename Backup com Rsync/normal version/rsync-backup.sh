@@ -98,8 +98,9 @@ echo -e "\n Backup com rsync \n $MENU"
 while test -n "$1"; do
   case "$1" in
     -l)
-        clear && echo -e "${AMARELO}Backup local \n" && tput sgr0
-        read -rp "Informe a origem: " dir_origem                          #Exemplo: /home/user/nome*composto
+        clear && echo -e "${AMARELO}Backup local \n" && tput sgr0 
+        read -rp "Informe a origem: " dir_origem
+        #Exemplo: /home/user/nome*composto
         echo -e "\nOs arquivos serão salvos em /home/$USER/Backup/ \n"
         echo "Deseja manter esse diretório de destino? [s/n] "
         read -rn1 resposta && echo ""
