@@ -6,7 +6,7 @@
 # Autor:      Flávio Varejão
 # Manutenção: Flávio Varejão
 # -------------------------------------------------------------------------------------------------------------------------- #
-# Este script organiza o diretório de Downloads automaticamente de acordo com o tipo de arquivo.
+# Este script organiza um diretório automaticamente de acordo com o tempo configurado.
 # Os arquivos serão movidos para os diretórios predeterminados pelo usuário.
 #
 # Este script será utilizado no agendador de tarefas crontab e o tempo de execução será configurado pelo usuário.
@@ -34,7 +34,7 @@ Documentos() {
 }
 
 Pacotes() {
-  mv *.deb *.run *.zip *.tar.xz ./Pacotes 2> /dev/null
+  mv *.deb *.bin *.run *.zip *.tar.xz ./Pacotes 2> /dev/null
 }
 
 Imagem_Disco() {
@@ -42,6 +42,10 @@ Imagem_Disco() {
 }
 # -------------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------- EXECUÇÃO ------------------------------------------------ #
+#Nesse script eu criei os diretórios Imagens, Multimidia, Documentos e etc dentro da pasta de Downloads para
+#organizar os arquivos que são baixados. Por exemplo, se um arquivo pdf for baixado, ele será movido para a pasta
+#Documentos dentro de um determinado tempo configurado no crontab.
+
 cd $HOME/Downloads/
 
 #Imagens
